@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { Movie } from "@/lib/moviesStore";
-import { Show } from "@/lib/showsStore";
+import { getMovieById } from "@/lib/moviesStore";
+import { getShowsByMovieId } from "@/lib/showsStore";
 import ShowtimeCard from "@/components/ShowtimeCard";
 import MoviePoster from "@/components/MoviePoster";
 
@@ -8,24 +8,10 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-async function getMovie(id: string): Promise<Movie | null> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-  const res = await fetch(`${baseUrl}/api/movies/${id}`, { cache: "no-store" });
-  if (!res.ok) return null;
-  return res.json();
-}
-
-async function getShows(movieId: string): Promise<Show[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-  const res = await fetch(`${baseUrl}/api/shows/${movieId}`, {
-    cache: "no-store",
-  });
-  return res.json();
-}
-
 export default async function MovieDetailsPage({ params }: PageProps) {
   const { id } = await params;
-  const [movie, shows] = await Promise.all([getMovie(id), getShows(id)]);
+  const movie = getMovieById(id);
+  const shows = getShowsByMovieId(id);
 
   if (!movie) {
     return (

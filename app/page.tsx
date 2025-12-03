@@ -1,16 +1,9 @@
 import Link from "next/link";
-import { Movie } from "@/lib/moviesStore";
+import { getAllMovies } from "@/lib/moviesStore";
 import MovieCard from "@/components/MovieCard";
 
-async function getMovies(): Promise<Movie[]> {
-  // In development, use localhost; in production, use the base URL
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-  const res = await fetch(`${baseUrl}/api/movies`, { cache: "no-store" });
-  return res.json();
-}
-
 export default async function HomePage() {
-  const movies = await getMovies();
+  const movies = getAllMovies();
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
